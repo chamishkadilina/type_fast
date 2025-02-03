@@ -18,6 +18,16 @@ class TypingTestProvider extends ChangeNotifier {
   bool isFirstWord = true;
   bool isCurrentWordCorrect = true;
 
+  // Available time durations in seconds
+  final List<int> availableDurations = [
+    60,
+    120,
+    300,
+    600
+  ]; // 1, 2, 5, 10 minutes
+  int currentDurationIndex = 0;
+  int selectedDuration = 60; // Track the actual test duration
+
   // Statistics
   int correctWords = 0;
   int wrongWords = 0;
@@ -26,6 +36,16 @@ class TypingTestProvider extends ChangeNotifier {
 
   TypingTestProvider() {
     generateNewWordList();
+  }
+
+  void cycleDuration() {
+    if (!isTestActive) {
+      currentDurationIndex =
+          (currentDurationIndex + 1) % availableDurations.length;
+      secondsRemaining = availableDurations[currentDurationIndex];
+      selectedDuration = availableDurations[currentDurationIndex];
+      notifyListeners();
+    }
   }
 
   void generateNewWordList() {
@@ -44,7 +64,8 @@ class TypingTestProvider extends ChangeNotifier {
 
   void startTest() {
     _timer?.cancel();
-    secondsRemaining = 60;
+    secondsRemaining = availableDurations[currentDurationIndex];
+    selectedDuration = availableDurations[currentDurationIndex];
     currentWordIndex = 0;
     currentTypedWord = '';
     isFirstWord = true;
@@ -60,7 +81,8 @@ class TypingTestProvider extends ChangeNotifier {
 
   void restartTest() {
     _timer?.cancel();
-    secondsRemaining = 60;
+    secondsRemaining = availableDurations[currentDurationIndex];
+    selectedDuration = availableDurations[currentDurationIndex];
     currentWordIndex = 0;
     currentTypedWord = '';
     isFirstWord = true;
@@ -144,13 +166,17 @@ class TypingTestProvider extends ChangeNotifier {
     _timer = null;
     isTestActive = false;
 
+    // Calculate WPM based on the selected duration
+    double minutes = selectedDuration / 60.0;
+    int calculatedWPM = (correctWords / minutes).round();
+
     // Show result dialog
     if (navigatorKey.currentContext != null) {
       showDialog(
         context: navigatorKey.currentContext!,
         barrierDismissible: false,
         builder: (context) => ResultDialog(
-          wpm: correctWords,
+          wpm: calculatedWPM,
           keystrokes: totalKeystrokes,
           accuracy: correctWords > 0
               ? (correctWords / (correctWords + wrongWords) * 100)
@@ -158,6 +184,7 @@ class TypingTestProvider extends ChangeNotifier {
               : "0",
           correctWords: correctWords,
           wrongWords: wrongWords,
+          testDurationInMinutes: minutes,
         ),
       );
     }

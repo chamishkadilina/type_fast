@@ -9,6 +9,7 @@ class ResultDialog extends StatelessWidget {
   final String accuracy;
   final int correctWords;
   final int wrongWords;
+  final double testDurationInMinutes;
 
   const ResultDialog({
     super.key,
@@ -17,6 +18,7 @@ class ResultDialog extends StatelessWidget {
     required this.accuracy,
     required this.correctWords,
     required this.wrongWords,
+    required this.testDurationInMinutes,
   });
 
   @override
@@ -46,9 +48,9 @@ class ResultDialog extends StatelessWidget {
                 color: Colors.green,
               ),
             ),
-            const Text(
-              '(words per minute)',
-              style: TextStyle(
+            Text(
+              '(${testDurationInMinutes.toStringAsFixed(1)} minute test)',
+              style: const TextStyle(
                 color: Colors.grey,
               ),
             ),
