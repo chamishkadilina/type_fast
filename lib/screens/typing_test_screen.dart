@@ -20,6 +20,17 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
     return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
+  String getModeText(DifficultyMode mode) {
+    switch (mode) {
+      case DifficultyMode.easy:
+        return 'Easy';
+      case DifficultyMode.medium:
+        return 'Med';
+      case DifficultyMode.hard:
+        return 'Hard';
+    }
+  }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -89,6 +100,36 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                             ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Mode selector button
+                  Consumer<TypingTestProvider>(
+                    builder: (context, provider, _) => Container(
+                      width: 60,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF4A90E2),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: TextButton(
+                        onPressed: () {
+                          if (!provider.isTestActive) {
+                            provider.cycleMode();
+                          }
+                        },
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                        ),
+                        child: Text(
+                          getModeText(provider.currentMode),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),

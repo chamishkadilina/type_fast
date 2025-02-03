@@ -1,4 +1,3 @@
-// lib/widgets/result_dialog.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/typing_test_provider.dart';
@@ -10,6 +9,7 @@ class ResultDialog extends StatelessWidget {
   final int correctWords;
   final int wrongWords;
   final double testDurationInMinutes;
+  final DifficultyMode currentMode;
 
   const ResultDialog({
     super.key,
@@ -19,7 +19,20 @@ class ResultDialog extends StatelessWidget {
     required this.correctWords,
     required this.wrongWords,
     required this.testDurationInMinutes,
+    required this.currentMode,
   });
+
+  // Helper method to get mode text
+  String _getModeText(DifficultyMode mode) {
+    switch (mode) {
+      case DifficultyMode.easy:
+        return 'Easy';
+      case DifficultyMode.medium:
+        return 'Medium';
+      case DifficultyMode.hard:
+        return 'Hard';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +62,7 @@ class ResultDialog extends StatelessWidget {
               ),
             ),
             Text(
-              '(${testDurationInMinutes.toStringAsFixed(1)} minute test)',
+              '(${testDurationInMinutes.toStringAsFixed(1)} minute ${_getModeText(currentMode)} mode)',
               style: const TextStyle(
                 color: Colors.grey,
               ),

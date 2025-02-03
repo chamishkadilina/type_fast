@@ -6,6 +6,8 @@ import '../constants/word_list.dart';
 import '../widgets/result_dialog.dart';
 import '../main.dart';
 
+enum DifficultyMode { easy, medium, hard }
+
 class TypingTestProvider extends ChangeNotifier {
   final List<String> currentWords = [];
   final List<bool> wordStatus = [];
@@ -17,6 +19,7 @@ class TypingTestProvider extends ChangeNotifier {
   String currentTypedWord = '';
   bool isFirstWord = true;
   bool isCurrentWordCorrect = true;
+  DifficultyMode currentMode = DifficultyMode.easy;
 
   // Available time durations in seconds
   final List<int> availableDurations = [
@@ -48,14 +51,46 @@ class TypingTestProvider extends ChangeNotifier {
     }
   }
 
+  void cycleMode() {
+    if (!isTestActive) {
+      switch (currentMode) {
+        case DifficultyMode.easy:
+          currentMode = DifficultyMode.medium;
+          break;
+        case DifficultyMode.medium:
+          currentMode = DifficultyMode.hard;
+          break;
+        case DifficultyMode.hard:
+          currentMode = DifficultyMode.easy;
+          break;
+      }
+      generateNewWordList();
+      notifyListeners();
+    }
+  }
+
   void generateNewWordList() {
     currentWords.clear();
     wordStatus.clear();
     var random = Random();
 
+    // Select word list based on current mode
+    List<String> selectedWordList;
+    switch (currentMode) {
+      case DifficultyMode.easy:
+        selectedWordList = easyWordList;
+        break;
+      case DifficultyMode.medium:
+        selectedWordList = mediumWordList;
+        break;
+      case DifficultyMode.hard:
+        selectedWordList = hardWordList;
+        break;
+    }
+
     for (int i = 0; i < wordsPerLine * 2; i++) {
       currentWords.add(
-        defaultWordList[random.nextInt(defaultWordList.length)],
+        selectedWordList[random.nextInt(selectedWordList.length)],
       );
       wordStatus.add(false);
     }
@@ -185,6 +220,7 @@ class TypingTestProvider extends ChangeNotifier {
           correctWords: correctWords,
           wrongWords: wrongWords,
           testDurationInMinutes: minutes,
+          currentMode: currentMode,
         ),
       );
     }
