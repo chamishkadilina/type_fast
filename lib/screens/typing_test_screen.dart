@@ -67,21 +67,28 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Container(
-                    width: 60,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2F4050),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Center(
-                      child: Consumer<TypingTestProvider>(
-                        builder: (context, provider, _) => Text(
-                          formatTime(provider.secondsRemaining),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                  Consumer<TypingTestProvider>(
+                    builder: (context, provider, _) => GestureDetector(
+                      onTap: () {
+                        if (!provider.isTestActive) {
+                          provider.cycleDuration();
+                        }
+                      },
+                      child: Container(
+                        width: 60,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2F4050),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Center(
+                          child: Text(
+                            formatTime(provider.secondsRemaining),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),

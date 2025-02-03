@@ -18,6 +18,7 @@ class TypeFastApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => TypingTestProvider(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         navigatorKey: navigatorKey,
         title: 'TypeFast',
         theme: ThemeData(
