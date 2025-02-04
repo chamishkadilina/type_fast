@@ -112,7 +112,11 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
                       width: 60,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF4A90E2),
+                        color: provider.currentMode == DifficultyMode.easy
+                            ? const Color(0xFF4CAF50) // Easy green
+                            : provider.currentMode == DifficultyMode.medium
+                                ? const Color(0xFFFF9800) // Medium orange
+                                : const Color(0xFFF44336), // Hard red
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: TextButton(

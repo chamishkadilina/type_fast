@@ -23,6 +23,7 @@ class TypingTestProvider extends ChangeNotifier {
 
   // Available time durations in seconds
   final List<int> availableDurations = [
+    5,
     60,
     120,
     300,
