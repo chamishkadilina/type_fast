@@ -1,6 +1,7 @@
 // lib/screens/typing_test_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:type_fast/widgets/statistics_dialog.dart';
 import '../providers/typing_test_provider.dart';
 import '../widgets/word_display.dart';
 
@@ -46,7 +47,65 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             children: [
-              const SizedBox(height: 20),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Colors.grey.withValues(alpha: 0.2),
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // Brand Show
+                    Text(
+                      'TypeFast',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Spacer(),
+                    // Statistics and Settings
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextButton.icon(
+                          onPressed: () => showDialog(
+                            context: context,
+                            builder: (_) => const StatisticsDialog(),
+                          ),
+                          icon: const Icon(
+                            Icons.bar_chart,
+                            color: Color(0xFF2F4050),
+                          ),
+                          label: const Text(
+                            'Statistics',
+                            style: TextStyle(
+                              color: Color(0xFF2F4050),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.settings,
+                            color: Color(0xFF2F4050),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
               const WordDisplay(),
               const SizedBox(height: 16),
               Row(
@@ -68,9 +127,13 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
                               _controller.clear();
                             }
                           },
-                          decoration: const InputDecoration(
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 12),
+                          decoration: InputDecoration(
+                            hintText: 'Start typing..',
+                            hintStyle: TextStyle(color: Colors.grey.shade500),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 10,
+                            ),
                             border: InputBorder.none,
                           ),
                         ),
@@ -113,10 +176,11 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
                       height: 40,
                       decoration: BoxDecoration(
                         color: provider.currentMode == DifficultyMode.easy
-                            ? const Color(0xFF4CAF50) // Easy green
+                            ? const Color(
+                                0xFF388E3C) // Easy - Professional forest green
                             : provider.currentMode == DifficultyMode.medium
-                                ? const Color(0xFFFF9800) // Medium orange
-                                : const Color(0xFFF44336), // Hard red
+                                ? const Color(0xFF4258FF) // Medium - Rich blue
+                                : const Color(0xFF913AF1), // Hard - Deep purple
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: TextButton(

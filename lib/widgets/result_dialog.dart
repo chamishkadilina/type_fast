@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:type_fast/model/test_result.dart';
+import 'package:type_fast/services/statistics_service.dart';
 import '../providers/typing_test_provider.dart';
 
 class ResultDialog extends StatelessWidget {
@@ -11,7 +13,7 @@ class ResultDialog extends StatelessWidget {
   final double testDurationInMinutes;
   final DifficultyMode currentMode;
 
-  const ResultDialog({
+  ResultDialog({
     super.key,
     required this.wpm,
     required this.keystrokes,
@@ -20,7 +22,16 @@ class ResultDialog extends StatelessWidget {
     required this.wrongWords,
     required this.testDurationInMinutes,
     required this.currentMode,
-  });
+  }) {
+    // Save result when dialog is created
+    StatisticsService().saveTestResult(
+      TestResult(
+        wpm: wpm,
+        mode: _getModeText(currentMode),
+        timestamp: DateTime.now(),
+      ),
+    );
+  }
 
   String _getModeText(DifficultyMode mode) {
     switch (mode) {
