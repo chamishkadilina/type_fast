@@ -1,7 +1,7 @@
 // lib/screens/typing_test_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:type_fast/widgets/statistics_dialog.dart';
+import 'package:type_fast/screens/statistics_screen.dart';
 import '../providers/typing_test_provider.dart';
 import '../widgets/word_display.dart';
 
@@ -76,10 +76,14 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         TextButton.icon(
-                          onPressed: () => showDialog(
-                            context: context,
-                            builder: (_) => const StatisticsDialog(),
-                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const StatisticsScreen(),
+                              ),
+                            );
+                          },
                           icon: const Icon(
                             Icons.bar_chart,
                             color: Color(0xFF2F4050),
