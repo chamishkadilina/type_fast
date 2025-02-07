@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:provider/provider.dart';
 import 'package:type_fast/model/test_result.dart';
 import 'package:type_fast/services/statistics_service.dart';
 import 'package:type_fast/widgets/clear_data_dialog.dart';
+import 'package:type_fast/providers/theme_provider.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
@@ -27,12 +29,23 @@ class _StatisticsScreenState extends State<StatisticsScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: _modes.length, vsync: this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
+
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Color(0xFFDBEAF9),
-        statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: Color(0xFFDBEAF9),
-        systemNavigationBarIconBrightness: Brightness.dark,
+      SystemUiOverlayStyle(
+        statusBarColor: isDarkMode ? Colors.black87 : const Color(0xFFDBEAF9),
+        statusBarIconBrightness:
+            isDarkMode ? Brightness.light : Brightness.dark,
+        systemNavigationBarColor:
+            isDarkMode ? Colors.black87 : const Color(0xFFDBEAF9),
+        systemNavigationBarIconBrightness:
+            isDarkMode ? Brightness.light : Brightness.dark,
       ),
     );
   }
@@ -85,17 +98,21 @@ class _StatisticsScreenState extends State<StatisticsScreen>
     return statsByMode;
   }
 
-  Widget _buildStatCard(
-      String label, dynamic value, IconData icon, Color color) {
+  Widget _buildStatCard(String label, dynamic value, IconData icon, Color color,
+      bool isDarkMode) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withValues(alpha: 0.1)),
+          border: Border.all(
+            color: isDarkMode
+                ? color.withValues(alpha: 0.2)
+                : color.withValues(alpha: 0.1),
+          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -117,7 +134,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: Colors.grey[600],
+                color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
               ),
             ),
           ],
@@ -126,14 +143,19 @@ class _StatisticsScreenState extends State<StatisticsScreen>
     );
   }
 
-  Widget _buildProgressGraph(List<TestResult> recentTests, Color color) {
+  Widget _buildProgressGraph(
+      List<TestResult> recentTests, Color color, bool isDarkMode) {
     if (recentTests.isEmpty) {
       return Container(
         height: 200,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withValues(alpha: 0.1)),
+          border: Border.all(
+            color: isDarkMode
+                ? color.withValues(alpha: 0.2)
+                : color.withValues(alpha: 0.1),
+          ),
         ),
         child: Center(
           child: Column(
@@ -145,7 +167,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
               Text(
                 'No data available yet',
                 style: TextStyle(
-                  color: Colors.grey[600],
+                  color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -154,7 +176,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
               Text(
                 'Complete some typing tests to see your progress',
                 style: TextStyle(
-                  color: Colors.grey[400],
+                  color: isDarkMode ? Colors.grey[600] : Colors.grey[400],
                   fontSize: 14,
                 ),
               ),
@@ -166,6 +188,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
 
     return Card(
       elevation: 2,
+      color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -189,10 +212,14 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                     show: true,
                     drawVerticalLine: true,
                     horizontalInterval: 20,
-                    getDrawingHorizontalLine: (value) =>
-                        FlLine(color: Colors.grey[200]!, strokeWidth: 1),
-                    getDrawingVerticalLine: (value) =>
-                        FlLine(color: Colors.grey[200]!, strokeWidth: 1),
+                    getDrawingHorizontalLine: (value) => FlLine(
+                      color: isDarkMode ? Colors.grey[800]! : Colors.grey[200]!,
+                      strokeWidth: 1,
+                    ),
+                    getDrawingVerticalLine: (value) => FlLine(
+                      color: isDarkMode ? Colors.grey[800]! : Colors.grey[200]!,
+                      strokeWidth: 1,
+                    ),
                   ),
                   titlesData: FlTitlesData(
                     bottomTitles: AxisTitles(
@@ -209,7 +236,9 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                             child: Text(
                               (value.toInt() + 1).toString(),
                               style: TextStyle(
-                                color: Colors.grey[600],
+                                color: isDarkMode
+                                    ? Colors.grey[400]
+                                    : Colors.grey[600],
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -226,7 +255,9 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                         getTitlesWidget: (value, meta) => Text(
                           value.toInt().toString(),
                           style: TextStyle(
-                            color: Colors.grey[600],
+                            color: isDarkMode
+                                ? Colors.grey[400]
+                                : Colors.grey[600],
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
@@ -257,7 +288,9 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                         getDotPainter: (spot, percent, barData, index) =>
                             FlDotCirclePainter(
                           radius: 4,
-                          color: Colors.white,
+                          color: isDarkMode
+                              ? const Color(0xFF1E1E1E)
+                              : Colors.white,
                           strokeWidth: 2,
                           strokeColor: color,
                         ),
@@ -269,6 +302,8 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                     ),
                   ],
                   minY: 0,
+                  backgroundColor:
+                      isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
                 ),
               ),
             ),
@@ -280,21 +315,26 @@ class _StatisticsScreenState extends State<StatisticsScreen>
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
     final statsByMode = _getStatsByMode();
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFDBEAF9),
+      backgroundColor: isDarkMode ? Colors.black87 : const Color(0xFFDBEAF9),
       appBar: AppBar(
-        backgroundColor: Colors.white.withValues(alpha: 0.2),
+        backgroundColor: isDarkMode
+            ? Colors.black87.withValues(alpha: 0.3)
+            : Colors.white.withValues(alpha: 0.2),
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete_outline_rounded,
-                color: Color(0xFF2F4050)),
+            icon: Icon(
+              Icons.delete_outline_rounded,
+              color: isDarkMode ? Colors.white70 : const Color(0xFF2F4050),
+            ),
             onPressed: () {
               ClearDataDialog.show(context).then((_) {
-                // Refresh the UI after dialog is closed
                 setState(() {});
               });
             },
@@ -303,25 +343,32 @@ class _StatisticsScreenState extends State<StatisticsScreen>
         ],
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF2F4050)),
+          icon: Icon(
+            Icons.arrow_back,
+            color: isDarkMode ? Colors.white70 : const Color(0xFF2F4050),
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
+        title: Text(
           'Typing Statistics',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF2F4050),
+            color: isDarkMode ? Colors.white70 : const Color(0xFF2F4050),
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.5),
+              color: isDarkMode
+                  ? Colors.black87.withValues(alpha: 0.3)
+                  : Colors.white.withValues(alpha: 0.5),
               border: Border(
                 bottom: BorderSide(
-                  color: Colors.grey.withValues(alpha: 0.2),
+                  color: isDarkMode
+                      ? Colors.grey[800]!
+                      : Colors.grey.withValues(alpha: 0.2),
                 ),
               ),
             ),
@@ -384,24 +431,28 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                           stats['testsTaken'],
                           Icons.history_rounded,
                           _modeColors[index],
+                          isDarkMode,
                         ),
                         _buildStatCard(
                           'Highest WPM',
                           stats['highestWpm'],
                           Icons.emoji_events_rounded,
                           _modeColors[index],
+                          isDarkMode,
                         ),
                         _buildStatCard(
                           'Average WPM',
                           stats['averageWpm'],
                           Icons.speed_rounded,
                           _modeColors[index],
+                          isDarkMode,
                         ),
                         _buildStatCard(
                           'Lowest WPM',
                           stats['lowestWpm'],
                           Icons.show_chart_rounded,
                           _modeColors[index],
+                          isDarkMode,
                         ),
                       ],
                     ),
@@ -409,6 +460,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                     _buildProgressGraph(
                       stats['recentTests'],
                       _modeColors[index],
+                      isDarkMode,
                     ),
                   ],
                 ),
