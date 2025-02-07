@@ -1,6 +1,7 @@
 // lib/screens/typing_test_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:type_fast/screens/settings_screen.dart';
 import 'package:type_fast/screens/statistics_screen.dart';
 import '../providers/typing_test_provider.dart';
 import '../widgets/word_display.dart';
@@ -48,8 +49,7 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
           child: Column(
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                padding: const EdgeInsets.only(left: 16),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
                   border: Border(
@@ -98,7 +98,14 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
                           ),
                         ),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SettingsScreen(),
+                              ),
+                            );
+                          },
                           icon: const Icon(
                             Icons.settings,
                             color: Color(0xFF2F4050),
