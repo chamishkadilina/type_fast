@@ -1,28 +1,37 @@
-// lib/widgets/clear_data_dialog.dart
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:type_fast/model/test_result.dart';
+import 'package:type_fast/providers/theme_provider.dart';
 
 class ClearDataDialog {
   static Future<void> show(BuildContext context) async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
+        final themeProvider = Provider.of<ThemeProvider>(context);
+        final isDarkMode = themeProvider.isDarkMode;
+
         return AlertDialog(
+          backgroundColor: themeProvider.theme.cardColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          title: const Text(
+          title: Text(
             'Clear All Data',
             style: TextStyle(
               fontWeight: FontWeight.w600,
-              color: Color(0xFF2F4050),
+              color: isDarkMode
+                  ? Colors.white.withValues(alpha: 0.9)
+                  : const Color(0xFF2F4050),
             ),
           ),
-          content: const Text(
+          content: Text(
             'Are you sure you want to clear all typing test results? This action cannot be undone.',
             style: TextStyle(
-              color: Colors.black87,
+              color: isDarkMode
+                  ? Colors.white.withValues(alpha: 0.9)
+                  : Colors.black87,
               fontSize: 16,
             ),
           ),
@@ -32,7 +41,7 @@ class ClearDataDialog {
               child: Text(
                 'Cancel',
                 style: TextStyle(
-                  color: Colors.grey[600],
+                  color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -61,13 +70,19 @@ class ClearDataDialog {
     await box.clear();
 
     if (context.mounted) {
+      final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+      final isDarkMode = themeProvider.isDarkMode;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text(
+          content: Text(
             'All typing test results have been cleared',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(
+              color: isDarkMode ? Colors.white : Colors.white,
+            ),
           ),
-          backgroundColor: const Color(0xFF2F4050),
+          backgroundColor:
+              isDarkMode ? const Color(0xFF1E1E1E) : const Color(0xFF2F4050),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),

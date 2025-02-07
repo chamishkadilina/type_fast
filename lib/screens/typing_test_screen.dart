@@ -1,9 +1,9 @@
-// lib/screens/typing_test_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:type_fast/screens/settings_screen.dart';
 import 'package:type_fast/screens/statistics_screen.dart';
 import '../providers/typing_test_provider.dart';
+import '../providers/theme_provider.dart';
 import '../widgets/word_display.dart';
 
 class TypingTestScreen extends StatefulWidget {
@@ -41,8 +41,11 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFDBEAF9),
+      backgroundColor: themeProvider.theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -51,10 +54,14 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
               Container(
                 padding: const EdgeInsets.only(left: 16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: isDarkMode
+                      ? Colors.black.withValues(alpha: 0.3)
+                      : Colors.white.withValues(alpha: 0.2),
                   border: Border(
                     bottom: BorderSide(
-                      color: Colors.grey.withValues(alpha: 0.2),
+                      color: isDarkMode
+                          ? Colors.white.withValues(alpha: 0.1)
+                          : Colors.grey.withValues(alpha: 0.2),
                       width: 1,
                     ),
                   ),
@@ -62,16 +69,16 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    // Brand Show
                     Text(
                       'TypeFast',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
+                        color:
+                            isDarkMode ? Colors.white : const Color(0xFF2F4050),
                       ),
                     ),
-                    Spacer(),
-                    // Statistics and Settings
+                    const Spacer(),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -84,14 +91,18 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
                               ),
                             );
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.bar_chart,
-                            color: Color(0xFF2F4050),
+                            color: isDarkMode
+                                ? Colors.white70
+                                : const Color(0xFF2F4050),
                           ),
-                          label: const Text(
+                          label: Text(
                             'Statistics',
                             style: TextStyle(
-                              color: Color(0xFF2F4050),
+                              color: isDarkMode
+                                  ? Colors.white70
+                                  : const Color(0xFF2F4050),
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -106,9 +117,11 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
                               ),
                             );
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.settings,
-                            color: Color(0xFF2F4050),
+                            color: isDarkMode
+                                ? Colors.white70
+                                : const Color(0xFF2F4050),
                           ),
                         ),
                       ],
@@ -125,13 +138,17 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
                     child: Container(
                       height: 40,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color:
+                            isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Consumer<TypingTestProvider>(
                         builder: (context, provider, _) => TextField(
                           controller: _controller,
                           autofocus: true,
+                          style: TextStyle(
+                            color: isDarkMode ? Colors.white : Colors.black,
+                          ),
                           onChanged: (value) {
                             provider.checkWord(value);
                             if (value.endsWith(' ') && provider.isTestActive) {
@@ -140,8 +157,12 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
                           },
                           decoration: InputDecoration(
                             hintText: 'Start typing..',
-                            hintStyle: TextStyle(color: Colors.grey.shade500),
-                            contentPadding: EdgeInsets.symmetric(
+                            hintStyle: TextStyle(
+                              color: isDarkMode
+                                  ? Colors.white54
+                                  : Colors.grey.shade500,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
                               horizontal: 12,
                               vertical: 10,
                             ),
@@ -163,7 +184,9 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
                         width: 60,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2F4050),
+                          color: isDarkMode
+                              ? const Color(0xFF2C2C2C)
+                              : const Color(0xFF2F4050),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Center(
@@ -180,18 +203,16 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  // Mode selector button
                   Consumer<TypingTestProvider>(
                     builder: (context, provider, _) => Container(
                       width: 60,
                       height: 40,
                       decoration: BoxDecoration(
                         color: provider.currentMode == DifficultyMode.easy
-                            ? const Color(
-                                0xFF388E3C) // Easy - Professional forest green
+                            ? const Color(0xFF388E3C)
                             : provider.currentMode == DifficultyMode.medium
-                                ? const Color(0xFF4258FF) // Medium - Rich blue
-                                : const Color(0xFF913AF1), // Hard - Deep purple
+                                ? const Color(0xFF4258FF)
+                                : const Color(0xFF913AF1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: TextButton(
