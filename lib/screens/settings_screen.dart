@@ -96,7 +96,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required String title,
     Widget? trailing,
     VoidCallback? onTap,
-    Color? iconColor,
   }) {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
@@ -244,35 +243,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            ...benefits
-                .map((benefit) => Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.check_circle,
-                            size: 18,
-                            color: color?.withValues(
-                                alpha: themeProvider.isDarkMode ? 0.9 : 1.0),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              benefit,
-                              style: TextStyle(
-                                fontSize: 14,
-                                height: 1.4,
-                                color: themeProvider.isDarkMode
-                                    ? Colors.white.withValues(alpha: 0.8)
-                                    : Colors.black87,
-                              ),
-                            ),
-                          ),
-                        ],
+            ...benefits.map((benefit) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.check_circle,
+                        size: 18,
+                        color: color?.withValues(
+                            alpha: themeProvider.isDarkMode ? 0.9 : 1.0),
                       ),
-                    ))
-                .toList(),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          benefit,
+                          style: TextStyle(
+                            fontSize: 14,
+                            height: 1.4,
+                            color: themeProvider.isDarkMode
+                                ? Colors.white.withValues(alpha: 0.8)
+                                : Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
           ],
         ),
       ),
@@ -356,8 +353,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                             ],
                           ),
-                        ))
-                    .toList(),
+                        )),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
@@ -391,7 +387,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 icon: Icons.font_download,
                 title: 'Font',
                 trailing: DropdownButton<String>(
-                  value: _selectedFont,
+                  value: themeProvider.selectedFont,
                   items: _fontOptions.map((font) {
                     return DropdownMenuItem(
                       value: font,
@@ -400,10 +396,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   }).toList(),
                   onChanged: (value) {
                     if (value != null) {
-                      setState(() {
-                        _selectedFont = value;
-                        _saveSetting('selectedFont', value);
-                      });
+                      themeProvider.setFont(value);
                     }
                   },
                 ),
@@ -412,7 +405,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 icon: Icons.format_size,
                 title: 'Text Size',
                 trailing: DropdownButton<String>(
-                  value: _fontSizes[1],
+                  value: themeProvider.getFontSizeLabel(), // Use the new method
                   items: _fontSizes.map((size) {
                     return DropdownMenuItem(
                       value: size,
@@ -420,7 +413,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     );
                   }).toList(),
                   onChanged: (value) {
-                    // TODO: Implement font size change logic
+                    if (value != null) {
+                      themeProvider.setFontSize(value);
+                    }
                   },
                 ),
               ),

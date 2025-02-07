@@ -1,3 +1,4 @@
+// lib/widgets/word_desplay.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/typing_test_provider.dart';
@@ -32,29 +33,27 @@ class WordDisplay extends StatelessWidget {
                 color: index == provider.currentWordIndex
                     ? provider.isCurrentWordCorrect
                         ? isDarkMode
-                            ? Colors
-                                .grey[800] // Dark mode current word, correct
-                            : Colors
-                                .grey[200] // Light mode current word, correct
+                            ? Colors.grey[800]
+                            : Colors.grey[200]
                         : isDarkMode
-                            ? Colors.red[900]!
-                                .withValues(alpha: 0.5) // Dark mode error
-                            : Colors.red.shade200 // Light mode error
+                            ? Colors.red[900]!.withOpacity(0.5)
+                            : Colors.red.shade200
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(2),
               ),
               child: Text(
                 provider.currentWords[index],
                 style: TextStyle(
+                  fontFamily: themeProvider.selectedFont,
+                  fontSize: themeProvider.fontSize,
                   color: provider.wordStatus[index] == false &&
                           index < provider.currentWordIndex
                       ? isDarkMode
-                          ? Colors.red[300] // Dark mode error text
-                          : Colors.red // Light mode error text
+                          ? Colors.red[300]
+                          : Colors.red
                       : isDarkMode
-                          ? Colors.white // Dark mode normal text
-                          : Colors.black, // Light mode normal text
-                  fontSize: 16,
+                          ? Colors.white
+                          : Colors.black,
                   fontWeight: index == provider.currentWordIndex
                       ? FontWeight.bold
                       : FontWeight.normal,
