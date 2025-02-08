@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../providers/theme_provider.dart';
+import '../services/notification_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -15,8 +16,20 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _isDailyReminder = false;
+  TimeOfDay _reminderTime = const TimeOfDay(hour: 08, minute: 00);
+  List<bool> _selectedDays = List.generate(7, (index) => true);
   double _fontSize = 16.0;
   String _selectedFont = 'Roboto';
+  final List<String> _weekDays = [
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat',
+    'Sun'
+  ];
+  final NotificationService _notificationService = NotificationService();
 
   final List<String> _fontOptions = [
     'Roboto',
@@ -34,12 +47,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     _loadSettings();
     _getAppVersion();
+    _initializeNotifications();
+  }
+
+  Future<void> _initializeNotifications() async {
+    final bool granted = await _notificationService.initNotification();
+    setState(() {
+      _isDailyReminder = granted;
+    });
   }
 
   void _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _isDailyReminder = prefs.getBool('dailyReminder') ?? false;
+      final int hour = prefs.getInt('reminderHour') ?? 08;
+      final int minute = prefs.getInt('reminderMinute') ?? 00;
+      _reminderTime = TimeOfDay(hour: hour, minute: minute);
+      _selectedDays = List.generate(
+          7, (index) => prefs.getBool('reminderDay$index') ?? true);
       _fontSize = prefs.getDouble('fontSize') ?? 16.0;
       _selectedFont = prefs.getString('selectedFont') ?? 'Roboto';
     });
@@ -55,12 +81,107 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _saveSetting(String key, dynamic value) async {
     final prefs = await SharedPreferences.getInstance();
     if (value is bool) {
-      prefs.setBool(key, value);
+      await prefs.setBool(key, value);
     } else if (value is double) {
-      prefs.setDouble(key, value);
+      await prefs.setDouble(key, value);
     } else if (value is String) {
-      prefs.setString(key, value);
+      await prefs.setString(key, value);
+    } else if (value is int) {
+      await prefs.setInt(key, value);
     }
+  }
+
+  Future<void> _selectTime() async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: _reminderTime,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            timePickerTheme: TimePickerThemeData(
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              hourMinuteTextColor: Theme.of(context).primaryColor,
+              dayPeriodTextColor: Theme.of(context).primaryColor,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _reminderTime) {
+      setState(() {
+        _reminderTime = picked;
+        _saveSetting('reminderHour', picked.hour);
+        _saveSetting('reminderMinute', picked.minute);
+      });
+      await _updateNotificationSchedule();
+    }
+  }
+
+  Future<void> _updateNotificationSchedule() async {
+    if (_isDailyReminder) {
+      await _notificationService.scheduleDailyNotifications(
+        _reminderTime,
+        _selectedDays,
+      );
+    } else {
+      await _notificationService.cancelAllNotifications();
+    }
+  }
+
+  Widget _buildDaySelector() {
+    return Container(
+      height: 40,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: List.generate(7, (index) {
+          return GestureDetector(
+            onTap: _isDailyReminder
+                ? () {
+                    setState(() {
+                      _selectedDays[index] = !_selectedDays[index];
+                      _saveSetting('reminderDay$index', _selectedDays[index]);
+                    });
+                    _updateNotificationSchedule();
+                  }
+                : null,
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _isDailyReminder
+                    ? (_selectedDays[index]
+                        ? Theme.of(context).primaryColor
+                        : Colors.transparent)
+                    : Colors.grey.withOpacity(0.1),
+                border: Border.all(
+                  color: _isDailyReminder
+                      ? Theme.of(context).primaryColor
+                      : Colors.grey,
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  _weekDays[index],
+                  style: TextStyle(
+                    color: _isDailyReminder
+                        ? (_selectedDays[index]
+                            ? Colors.white
+                            : Theme.of(context).primaryColor)
+                        : Colors.grey,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
   }
 
   void _launchURL(String url) async {
@@ -91,11 +212,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  void _showNotificationRequiredDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Notifications Required'),
+        content: const Text(
+          'Please enable notifications in your system settings to use this feature.',
+        ),
+        actions: [
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSettingsTile({
     required IconData icon,
     required String title,
     Widget? trailing,
     VoidCallback? onTap,
+    bool enabled = true,
   }) {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
@@ -110,6 +252,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           return const Color(0xFF54A0FF);
         case Icons.notifications:
           return const Color(0xFFFF6B6B);
+        case Icons.access_time:
+          return const Color(0xFF2BCBBA);
+        case Icons.calendar_today:
+          return const Color(0xFF4B7BEC);
         case Icons.trending_up:
           return const Color(0xFF26DE81);
         case Icons.star:
@@ -126,25 +272,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     return ListTile(
+      enabled: enabled,
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
       leading: Container(
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: getIconColor()
-              .withValues(alpha: themeProvider.isDarkMode ? 0.15 : 0.1),
+          color: enabled
+              ? getIconColor()
+                  .withOpacity(themeProvider.isDarkMode ? 0.15 : 0.1)
+              : Colors.grey.withOpacity(0.1),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(
           icon,
-          color: getIconColor(),
+          color: enabled ? getIconColor() : Colors.grey,
           size: 20,
         ),
       ),
       title: Text(
         title,
         style: TextStyle(
-          color: themeProvider.isDarkMode ? Colors.white : Colors.black87,
+          color: enabled
+              ? (themeProvider.isDarkMode ? Colors.white : Colors.black87)
+              : Colors.grey,
           fontSize: 15,
           fontWeight: FontWeight.w500,
           letterSpacing: 0.2,
@@ -155,24 +306,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: themeProvider.isDarkMode
-                  ? Colors.white.withValues(alpha: 0.05)
-                  : Colors.black.withValues(alpha: 0.03),
+              color: enabled
+                  ? (themeProvider.isDarkMode
+                      ? Colors.white.withOpacity(0.05)
+                      : Colors.black.withOpacity(0.03))
+                  : Colors.grey.withOpacity(0.1),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(
               Icons.chevron_right,
               size: 16,
-              color: themeProvider.isDarkMode
-                  ? Colors.white.withValues(alpha: 0.5)
-                  : Colors.black.withValues(alpha: 0.3),
+              color: enabled
+                  ? (themeProvider.isDarkMode
+                      ? Colors.white.withOpacity(0.5)
+                      : Colors.black.withOpacity(0.3))
+                  : Colors.grey.withOpacity(0.3),
             ),
           ),
-      onTap: onTap,
+      onTap: enabled ? onTap : null,
     );
   }
 
-  Widget _buildTypingModeCard(String title, String tag, Color? color,
+  Widget _buildTypingModeCard(String title, String tag, Color color,
       String description, List<String> benefits) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
@@ -180,19 +335,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            color?.withValues(alpha: themeProvider.isDarkMode ? 0.8 : 0.1) ??
-                Colors.transparent,
-            color?.withValues(alpha: themeProvider.isDarkMode ? 0.6 : 0.05) ??
-                Colors.transparent,
+            color.withOpacity(themeProvider.isDarkMode ? 0.8 : 0.1),
+            color.withOpacity(themeProvider.isDarkMode ? 0.6 : 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color:
-              color?.withValues(alpha: themeProvider.isDarkMode ? 0.5 : 0.3) ??
-                  Colors.transparent,
+          color: color.withOpacity(themeProvider.isDarkMode ? 0.5 : 0.3),
           width: 1,
         ),
       ),
@@ -216,8 +367,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: color?.withValues(
-                        alpha: themeProvider.isDarkMode ? 0.2 : 0.1),
+                    color:
+                        color.withOpacity(themeProvider.isDarkMode ? 0.2 : 0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -238,7 +389,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
                 color: themeProvider.isDarkMode
-                    ? Colors.white.withValues(alpha: 0.9)
+                    ? Colors.white.withOpacity(0.9)
                     : Colors.black87,
               ),
             ),
@@ -251,8 +402,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Icon(
                         Icons.check_circle,
                         size: 18,
-                        color: color?.withValues(
-                            alpha: themeProvider.isDarkMode ? 0.9 : 1.0),
+                        color: color
+                            .withOpacity(themeProvider.isDarkMode ? 0.9 : 1.0),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -262,7 +413,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             fontSize: 14,
                             height: 1.4,
                             color: themeProvider.isDarkMode
-                                ? Colors.white.withValues(alpha: 0.8)
+                                ? Colors.white.withOpacity(0.8)
                                 : Colors.black87,
                           ),
                         ),
@@ -387,7 +538,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 icon: Icons.font_download,
                 title: 'Font',
                 trailing: DropdownButton<String>(
-                  value: themeProvider.selectedFont,
+                  value: _selectedFont,
                   items: _fontOptions.map((font) {
                     return DropdownMenuItem(
                       value: font,
@@ -396,7 +547,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   }).toList(),
                   onChanged: (value) {
                     if (value != null) {
-                      themeProvider.setFont(value);
+                      setState(() {
+                        _selectedFont = value;
+                        _saveSetting('selectedFont', value);
+                      });
                     }
                   },
                 ),
@@ -405,17 +559,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 icon: Icons.format_size,
                 title: 'Text Size',
                 trailing: DropdownButton<String>(
-                  value: themeProvider.getFontSizeLabel(), // Use the new method
+                  value: 'Medium',
                   items: _fontSizes.map((size) {
                     return DropdownMenuItem(
                       value: size,
                       child: Text(size),
                     );
                   }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      themeProvider.setFontSize(value);
-                    }
+                  onChanged: (String? value) {
+                    // Implement text size change
                   },
                 ),
               ),
@@ -431,18 +583,70 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 title: 'Daily Reminder',
                 trailing: Switch(
                   value: _isDailyReminder,
-                  onChanged: (value) {
-                    setState(() {
-                      _isDailyReminder = value;
-                      _saveSetting('dailyReminder', value);
-                    });
+                  onChanged: (value) async {
+                    if (value) {
+                      final bool granted =
+                          await _notificationService.requestPermissions();
+                      if (granted) {
+                        setState(() {
+                          _isDailyReminder = true;
+                          _saveSetting('dailyReminder', true);
+                        });
+                        await _updateNotificationSchedule();
+                      } else {
+                        _showNotificationRequiredDialog();
+                      }
+                    } else {
+                      setState(() {
+                        _isDailyReminder = false;
+                        _saveSetting('dailyReminder', false);
+                      });
+                      await _notificationService.cancelAllNotifications();
+                    }
                   },
                 ),
               ),
+              _buildSettingsTile(
+                icon: Icons.access_time,
+                title: 'Reminder Time',
+                enabled: _isDailyReminder,
+                trailing: TextButton(
+                  onPressed: _isDailyReminder ? _selectTime : null,
+                  child: Text(
+                    _reminderTime.format(context),
+                    style: TextStyle(
+                      color: _isDailyReminder
+                          ? Theme.of(context).primaryColor
+                          : Colors.grey,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+              _buildSettingsTile(
+                icon: Icons.calendar_today,
+                title: 'Notification Days',
+                enabled: _isDailyReminder,
+                trailing: Text(
+                  _selectedDays.every((day) => day)
+                      ? 'Every day'
+                      : _selectedDays.where((day) => day).length == 5 &&
+                              _selectedDays.sublist(0, 5).every((day) => day)
+                          ? 'Weekdays'
+                          : '${_selectedDays.where((day) => day).length} days',
+                  style: TextStyle(
+                    color: _isDailyReminder
+                        ? Theme.of(context).primaryColor
+                        : Colors.grey,
+                  ),
+                ),
+              ),
+              _buildDaySelector(),
+              const SizedBox(height: 8),
             ],
           ),
 
-          // Typing Modes Section
+          // About TypeFast Section
           _buildSettingsSection(
             'About TypeFast',
             [
@@ -522,7 +726,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 trailing: Text(
                   _currentVersion,
                   style: TextStyle(
-                    color: context.watch<ThemeProvider>().isDarkMode
+                    color: themeProvider.isDarkMode
                         ? Colors.white70
                         : Colors.black54,
                   ),
