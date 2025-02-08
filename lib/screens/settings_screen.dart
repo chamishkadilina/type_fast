@@ -551,6 +551,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         _selectedFont = value;
                         _saveSetting('selectedFont', value);
                       });
+                      themeProvider.setFont(value);
                     }
                   },
                 ),
@@ -559,7 +560,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 icon: Icons.format_size,
                 title: 'Text Size',
                 trailing: DropdownButton<String>(
-                  value: 'Medium',
+                  value: themeProvider.getFontSizeLabel(),
                   items: _fontSizes.map((size) {
                     return DropdownMenuItem(
                       value: size,
@@ -567,7 +568,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     );
                   }).toList(),
                   onChanged: (String? value) {
-                    // Implement text size change
+                    if (value != null) {
+                      themeProvider.setFontSize(value);
+                    }
                   },
                 ),
               ),
