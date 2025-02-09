@@ -17,12 +17,13 @@ class StatsTabBar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: isDarkMode
-            ? Colors.black87.withOpacity(0.3)
-            : Colors.white.withOpacity(0.5),
+            ? Colors.black87.withValues(alpha: 0.3)
+            : Colors.white.withValues(alpha: 0.5),
         border: Border(
           bottom: BorderSide(
-            color:
-                isDarkMode ? Colors.grey[800]! : Colors.grey.withOpacity(0.2),
+            color: isDarkMode
+                ? Colors.grey[800]!
+                : Colors.grey.withValues(alpha: 0.2),
           ),
         ),
       ),

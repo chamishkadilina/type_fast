@@ -17,13 +17,13 @@ class AppHeader extends StatelessWidget {
       padding: const EdgeInsets.only(left: 16),
       decoration: BoxDecoration(
         color: isDarkMode
-            ? Colors.black.withOpacity(0.3)
-            : Colors.white.withOpacity(0.2),
+            ? Colors.black.withValues(alpha: 0.3)
+            : Colors.white.withValues(alpha: 0.2),
         border: Border(
           bottom: BorderSide(
             color: isDarkMode
-                ? Colors.white.withOpacity(0.1)
-                : Colors.grey.withOpacity(0.2),
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.grey.withValues(alpha: 0.2),
             width: 1,
           ),
         ),

@@ -28,15 +28,15 @@ class TypingModeCard extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            color.withOpacity(themeProvider.isDarkMode ? 0.8 : 0.1),
-            color.withOpacity(themeProvider.isDarkMode ? 0.6 : 0.05),
+            color.withValues(alpha: themeProvider.isDarkMode ? 0.8 : 0.1),
+            color.withValues(alpha: themeProvider.isDarkMode ? 0.6 : 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(themeProvider.isDarkMode ? 0.5 : 0.3),
+          color: color.withValues(alpha: themeProvider.isDarkMode ? 0.5 : 0.3),
           width: 1,
         ),
       ),
@@ -60,8 +60,8 @@ class TypingModeCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color:
-                        color.withOpacity(themeProvider.isDarkMode ? 0.2 : 0.1),
+                    color: color.withValues(
+                        alpha: themeProvider.isDarkMode ? 0.2 : 0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -82,7 +82,7 @@ class TypingModeCard extends StatelessWidget {
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
                 color: themeProvider.isDarkMode
-                    ? Colors.white.withOpacity(0.9)
+                    ? Colors.white.withValues(alpha: 0.9)
                     : Colors.black87,
               ),
             ),
@@ -95,8 +95,8 @@ class TypingModeCard extends StatelessWidget {
                       Icon(
                         Icons.check_circle,
                         size: 18,
-                        color: color
-                            .withOpacity(themeProvider.isDarkMode ? 0.9 : 1.0),
+                        color: color.withValues(
+                            alpha: themeProvider.isDarkMode ? 0.9 : 1.0),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -106,7 +106,7 @@ class TypingModeCard extends StatelessWidget {
                             fontSize: 14,
                             height: 1.4,
                             color: themeProvider.isDarkMode
-                                ? Colors.white.withOpacity(0.8)
+                                ? Colors.white.withValues(alpha: 0.8)
                                 : Colors.black87,
                           ),
                         ),

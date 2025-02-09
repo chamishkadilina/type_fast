@@ -65,8 +65,9 @@ class SettingsTile extends StatelessWidget {
         height: 36,
         decoration: BoxDecoration(
           color: enabled
-              ? iconBaseColor.withOpacity(themeProvider.isDarkMode ? 0.15 : 0.1)
-              : Colors.grey.withOpacity(0.1),
+              ? iconBaseColor.withValues(
+                  alpha: themeProvider.isDarkMode ? 0.15 : 0.1)
+              : Colors.grey.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(
@@ -99,9 +100,9 @@ class SettingsTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: enabled
             ? (themeProvider.isDarkMode
-                ? Colors.white.withOpacity(0.05)
-                : Colors.black.withOpacity(0.03))
-            : Colors.grey.withOpacity(0.1),
+                ? Colors.white.withValues(alpha: 0.05)
+                : Colors.black.withValues(alpha: 0.03))
+            : Colors.grey.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Icon(
@@ -109,9 +110,9 @@ class SettingsTile extends StatelessWidget {
         size: 16,
         color: enabled
             ? (themeProvider.isDarkMode
-                ? Colors.white.withOpacity(0.5)
-                : Colors.black.withOpacity(0.3))
-            : Colors.grey.withOpacity(0.3),
+                ? Colors.white.withValues(alpha: 0.5)
+                : Colors.black.withValues(alpha: 0.3))
+            : Colors.grey.withValues(alpha: 0.3),
       ),
     );
   }

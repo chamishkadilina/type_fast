@@ -98,8 +98,8 @@ class _StatisticsScreenState extends State<StatisticsScreen>
           isDarkMode ? Colors.black87 : StatisticsColors.lightBackground,
       appBar: AppBar(
         backgroundColor: isDarkMode
-            ? Colors.black87.withOpacity(0.3)
-            : Colors.white.withOpacity(0.2),
+            ? Colors.black87.withValues(alpha: 0.3)
+            : Colors.white.withValues(alpha: 0.2),
         elevation: 0,
         leading: IconButton(
           icon: Icon(

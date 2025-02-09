@@ -24,14 +24,17 @@ class ProgressGraph extends StatelessWidget {
           color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isDarkMode ? color.withOpacity(0.2) : color.withOpacity(0.1),
+            color: isDarkMode
+                ? color.withValues(alpha: 0.2)
+                : color.withValues(alpha: 0.1),
           ),
         ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.show_chart, size: 48, color: color.withOpacity(0.3)),
+              Icon(Icons.show_chart,
+                  size: 48, color: color.withValues(alpha: 0.3)),
               const SizedBox(height: 16),
               Text(
                 'No data available yet',
@@ -176,7 +179,7 @@ class ProgressGraph extends StatelessWidget {
       ),
       belowBarData: BarAreaData(
         show: true,
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
       ),
     );
   }
