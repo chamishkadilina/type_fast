@@ -287,7 +287,7 @@ class _DayButton extends StatelessWidget {
           shape: BoxShape.circle,
           color: enabled
               ? (selected ? Theme.of(context).primaryColor : Colors.transparent)
-              : Colors.grey.withOpacity(0.1),
+              : Colors.grey.withValues(alpha: 0.1),
           border: Border.all(
             color: enabled ? Theme.of(context).primaryColor : Colors.grey,
             width: 1,

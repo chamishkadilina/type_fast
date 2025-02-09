@@ -1,4 +1,3 @@
-// lib/services/share_service.dart
 import 'package:share_plus/share_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'dart:io' show Platform;
@@ -15,8 +14,7 @@ class ShareService {
 
 Master your typing skills with:
 • Personalized practice sessions
-• Real-time statistics
-• Daily challenges
+• Advanced statistics
 • Multiple difficulty levels
 
 Download now and improve your typing speed!
@@ -34,17 +32,14 @@ Download now and improve your typing speed!
       await Share.share(
         shareText,
         subject: 'Check out $appName!',
-      ).catchError((error) {
-        print('Share error: $error');
+      ).catchError((_) {
         // Fallback to clipboard if sharing fails
         Clipboard.setData(ClipboardData(text: shareText));
         throw 'Unable to share. Text copied to clipboard instead.';
       });
-    } on PlatformException catch (e) {
-      print('Platform Exception: $e');
+    } on PlatformException {
       rethrow;
-    } catch (e) {
-      print('General Exception: $e');
+    } catch (_) {
       rethrow;
     }
   }

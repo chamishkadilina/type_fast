@@ -50,6 +50,7 @@ class ClearDataDialog {
             TextButton(
               onPressed: () async {
                 await _clearAllData(context);
+                if (!context.mounted) return;
                 Navigator.of(context).pop();
               },
               child: const Text(

@@ -28,6 +28,7 @@ class _MoreSectionState extends State<MoreSection> {
 
   Future<void> _getAppVersion() async {
     final packageInfo = await PackageInfo.fromPlatform();
+    if (!context.mounted) return;
     setState(() => _currentVersion = packageInfo.version);
   }
 
@@ -59,6 +60,7 @@ class _MoreSectionState extends State<MoreSection> {
               await _shareService.shareApp();
             } catch (e) {
               if (mounted) {
+                if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(e.toString())),
                 );
@@ -87,7 +89,7 @@ class _MoreSectionState extends State<MoreSection> {
                     .textTheme
                     .bodyMedium
                     ?.color
-                    ?.withOpacity(0.7),
+                    ?.withValues(alpha: 0.7),
               ),
             ),
           ),

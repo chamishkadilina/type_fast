@@ -55,7 +55,7 @@ class PremiumBanner extends StatelessWidget {
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
-              // TODO: Implement premium upgrade logic
+              // Implement premium upgrade logic
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,

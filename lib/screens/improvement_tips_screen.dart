@@ -119,7 +119,9 @@ class _TipCard extends StatelessWidget {
         color: themeProvider.theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.shade200,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : Colors.grey.shade200,
         ),
       ),
       child: Column(
@@ -131,7 +133,7 @@ class _TipCard extends StatelessWidget {
               border: Border(
                 bottom: BorderSide(
                   color: isDark
-                      ? Colors.white.withOpacity(0.1)
+                      ? Colors.white.withValues(alpha: 0.1)
                       : Colors.grey.shade200,
                 ),
               ),
@@ -141,7 +143,7 @@ class _TipCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(isDark ? 0.2 : 0.1),
+                    color: color.withValues(alpha: isDark ? 0.2 : 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(

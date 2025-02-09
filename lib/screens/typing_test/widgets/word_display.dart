@@ -36,7 +36,7 @@ class WordDisplay extends StatelessWidget {
                             ? Colors.grey[800]
                             : Colors.grey[200]
                         : isDarkMode
-                            ? Colors.red[900]!.withOpacity(0.5)
+                            ? Colors.red[900]!.withValues(alpha: 0.5)
                             : Colors.red.shade200
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(2),
