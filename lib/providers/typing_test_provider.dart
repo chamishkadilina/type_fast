@@ -2,67 +2,82 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../constants/difficulty_mode.dart';
 import '../constants/word_list.dart';
-import '../widgets/result_dialog.dart';
+import '../screens/typing_test/widgets/result_dialog.dart';
 import '../main.dart';
 
-enum DifficultyMode { easy, medium, hard }
-
 class TypingTestProvider extends ChangeNotifier {
-  final List<String> currentWords = [];
-  final List<bool> wordStatus = [];
-  int currentWordIndex = 0;
+  final List<String> _currentWords = [];
+  final List<bool> _wordStatus = [];
+  int _currentWordIndex = 0;
   Timer? _timer;
-  int secondsRemaining = 60;
-  bool isTestActive = false;
-  final int wordsPerLine = 12;
-  String currentTypedWord = '';
-  bool isFirstWord = true;
-  bool isCurrentWordCorrect = true;
-  DifficultyMode currentMode = DifficultyMode.easy;
+  int _secondsRemaining = 60;
+  bool _isTestActive = false;
+  final int _wordsPerLine = 12;
+  String _currentTypedWord = '';
+  bool _isFirstWord = true;
+  bool _isCurrentWordCorrect = true;
+  DifficultyMode _currentMode = DifficultyMode.easy;
 
   // Available time durations in seconds
-  final List<int> availableDurations = [
+  final List<int> _availableDurations = [
     60,
     120,
     300,
     600
   ]; // 1, 2, 5, 10 minutes
-  int currentDurationIndex = 0;
-  int selectedDuration = 60; // Track the actual test duration
+  int _currentDurationIndex = 0;
+  int _selectedDuration = 60;
 
   // Statistics
-  int correctWords = 0;
-  int wrongWords = 0;
-  int totalKeystrokes = 0;
-  List<bool> completedWordStatuses = [];
+  int _correctWords = 0;
+  int _wrongWords = 0;
+  int _totalKeystrokes = 0;
+  final List<bool> _completedWordStatuses = [];
+
+  // Getters
+  List<String> get currentWords => _currentWords;
+  List<bool> get wordStatus => _wordStatus;
+  int get currentWordIndex => _currentWordIndex;
+  int get secondsRemaining => _secondsRemaining;
+  bool get isTestActive => _isTestActive;
+  int get wordsPerLine => _wordsPerLine;
+  String get currentTypedWord => _currentTypedWord;
+  bool get isFirstWord => _isFirstWord;
+  bool get isCurrentWordCorrect => _isCurrentWordCorrect;
+  DifficultyMode get currentMode => _currentMode;
+  List<int> get availableDurations => _availableDurations;
+  int get currentDurationIndex => _currentDurationIndex;
+  int get selectedDuration => _selectedDuration;
+  int get correctWords => _correctWords;
+  int get wrongWords => _wrongWords;
+  int get totalKeystrokes => _totalKeystrokes;
+  List<bool> get completedWordStatuses => _completedWordStatuses;
 
   TypingTestProvider() {
     generateNewWordList();
   }
 
   void cycleDuration() {
-    if (!isTestActive) {
-      currentDurationIndex =
-          (currentDurationIndex + 1) % availableDurations.length;
-      secondsRemaining = availableDurations[currentDurationIndex];
-      selectedDuration = availableDurations[currentDurationIndex];
+    if (!_isTestActive) {
+      _currentDurationIndex =
+          (_currentDurationIndex + 1) % _availableDurations.length;
+      _secondsRemaining = _availableDurations[_currentDurationIndex];
+      _selectedDuration = _availableDurations[_currentDurationIndex];
       notifyListeners();
     }
   }
 
   void cycleMode() {
-    if (!isTestActive) {
-      switch (currentMode) {
+    if (!_isTestActive) {
+      switch (_currentMode) {
         case DifficultyMode.easy:
-          currentMode = DifficultyMode.medium;
-          break;
+          _currentMode = DifficultyMode.medium;
         case DifficultyMode.medium:
-          currentMode = DifficultyMode.hard;
-          break;
+          _currentMode = DifficultyMode.hard;
         case DifficultyMode.hard:
-          currentMode = DifficultyMode.easy;
-          break;
+          _currentMode = DifficultyMode.easy;
       }
       generateNewWordList();
       notifyListeners();
@@ -70,114 +85,105 @@ class TypingTestProvider extends ChangeNotifier {
   }
 
   void generateNewWordList() {
-    currentWords.clear();
-    wordStatus.clear();
+    _currentWords.clear();
+    _wordStatus.clear();
     var random = Random();
 
     // Select word list based on current mode
-    List<String> selectedWordList;
-    switch (currentMode) {
-      case DifficultyMode.easy:
-        selectedWordList = easyWordList;
-        break;
-      case DifficultyMode.medium:
-        selectedWordList = mediumWordList;
-        break;
-      case DifficultyMode.hard:
-        selectedWordList = hardWordList;
-        break;
-    }
+    List<String> selectedWordList = wordLists[_currentMode.name] ?? [];
 
-    for (int i = 0; i < wordsPerLine * 2; i++) {
-      currentWords.add(
+    if (selectedWordList.isEmpty) return;
+
+    for (int i = 0; i < _wordsPerLine * 2; i++) {
+      _currentWords.add(
         selectedWordList[random.nextInt(selectedWordList.length)],
       );
-      wordStatus.add(false);
+      _wordStatus.add(false);
     }
     notifyListeners();
   }
 
   void startTest() {
     _timer?.cancel();
-    secondsRemaining = availableDurations[currentDurationIndex];
-    selectedDuration = availableDurations[currentDurationIndex];
-    currentWordIndex = 0;
-    currentTypedWord = '';
-    isFirstWord = true;
-    isTestActive = false;
+    _secondsRemaining = _availableDurations[_currentDurationIndex];
+    _selectedDuration = _availableDurations[_currentDurationIndex];
+    _currentWordIndex = 0;
+    _currentTypedWord = '';
+    _isFirstWord = true;
+    _isTestActive = false;
     _resetStats();
 
     // Reset word status
-    wordStatus.fillRange(0, wordStatus.length, false);
+    _wordStatus.fillRange(0, _wordStatus.length, false);
 
-    isCurrentWordCorrect = true;
+    _isCurrentWordCorrect = true;
     notifyListeners();
   }
 
   void restartTest() {
     _timer?.cancel();
-    secondsRemaining = availableDurations[currentDurationIndex];
-    selectedDuration = availableDurations[currentDurationIndex];
-    currentWordIndex = 0;
-    currentTypedWord = '';
-    isFirstWord = true;
-    isTestActive = false;
+    _secondsRemaining = _availableDurations[_currentDurationIndex];
+    _selectedDuration = _availableDurations[_currentDurationIndex];
+    _currentWordIndex = 0;
+    _currentTypedWord = '';
+    _isFirstWord = true;
+    _isTestActive = false;
     _resetStats();
 
     // Generate new words for restart
     generateNewWordList();
 
-    isCurrentWordCorrect = true;
+    _isCurrentWordCorrect = true;
     notifyListeners();
   }
 
   void checkWord(String value) {
-    if (!isTestActive && value.isNotEmpty) {
-      isTestActive = true;
+    if (!_isTestActive && value.isNotEmpty) {
+      _isTestActive = true;
       _startTimer();
     }
 
-    if (!isTestActive || currentWordIndex >= currentWords.length) return;
+    if (!_isTestActive || _currentWordIndex >= _currentWords.length) return;
 
     // Track keystrokes
-    if (value.length > currentTypedWord.length) {
-      totalKeystrokes++;
+    if (value.length > _currentTypedWord.length) {
+      _totalKeystrokes++;
     }
 
-    String targetWord = currentWords[currentWordIndex];
+    String targetWord = _currentWords[_currentWordIndex];
 
     if (value.endsWith(' ')) {
       String typedWord = value.trim();
 
       if (typedWord.isNotEmpty) {
         bool isCorrect = typedWord == targetWord;
-        wordStatus[currentWordIndex] = isCorrect;
-        completedWordStatuses.add(isCorrect);
+        _wordStatus[_currentWordIndex] = isCorrect;
+        _completedWordStatuses.add(isCorrect);
 
         if (isCorrect) {
-          correctWords++;
+          _correctWords++;
         } else {
-          wrongWords++;
+          _wrongWords++;
         }
 
-        currentWordIndex++;
-        isFirstWord = false;
-        isCurrentWordCorrect = true; // Reset for next word
+        _currentWordIndex++;
+        _isFirstWord = false;
+        _isCurrentWordCorrect = true; // Reset for next word
 
-        if (currentWordIndex >= currentWords.length) {
+        if (_currentWordIndex >= _currentWords.length) {
           generateNewWordList();
-          currentWordIndex = 0;
+          _currentWordIndex = 0;
         }
       }
     } else {
-      currentTypedWord = value;
+      _currentTypedWord = value;
 
       if (value.isNotEmpty) {
         // Update current word typing status
-        isCurrentWordCorrect = targetWord.startsWith(value);
-        wordStatus[currentWordIndex] = isCurrentWordCorrect;
+        _isCurrentWordCorrect = targetWord.startsWith(value);
+        _wordStatus[_currentWordIndex] = _isCurrentWordCorrect;
       } else {
-        isCurrentWordCorrect = true; // Reset when empty
+        _isCurrentWordCorrect = true; // Reset when empty
       }
     }
 
@@ -187,8 +193,8 @@ class TypingTestProvider extends ChangeNotifier {
   void _startTimer() {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (secondsRemaining > 0) {
-        secondsRemaining--;
+      if (_secondsRemaining > 0) {
+        _secondsRemaining--;
         notifyListeners();
       } else {
         endTest();
@@ -199,11 +205,12 @@ class TypingTestProvider extends ChangeNotifier {
   void endTest() {
     _timer?.cancel();
     _timer = null;
-    isTestActive = false;
+    _isTestActive = false;
+    _currentTypedWord = ''; // Reset typed word
 
     // Calculate WPM based on the selected duration
-    double minutes = selectedDuration / 60.0;
-    int calculatedWPM = (correctWords / minutes).round();
+    double minutes = _selectedDuration / 60.0;
+    int calculatedWPM = (_correctWords / minutes).round();
 
     // Show result dialog
     if (navigatorKey.currentContext != null) {
@@ -212,15 +219,15 @@ class TypingTestProvider extends ChangeNotifier {
         barrierDismissible: false,
         builder: (context) => ResultDialog(
           wpm: calculatedWPM,
-          keystrokes: totalKeystrokes,
-          accuracy: correctWords > 0
-              ? (correctWords / (correctWords + wrongWords) * 100)
+          keystrokes: _totalKeystrokes,
+          accuracy: _correctWords > 0
+              ? (_correctWords / (_correctWords + _wrongWords) * 100)
                   .toStringAsFixed(2)
               : "0",
-          correctWords: correctWords,
-          wrongWords: wrongWords,
+          correctWords: _correctWords,
+          wrongWords: _wrongWords,
           testDurationInMinutes: minutes,
-          currentMode: currentMode,
+          currentMode: _currentMode,
         ),
       );
     }
@@ -229,10 +236,10 @@ class TypingTestProvider extends ChangeNotifier {
   }
 
   void _resetStats() {
-    correctWords = 0;
-    wrongWords = 0;
-    totalKeystrokes = 0;
-    completedWordStatuses.clear();
+    _correctWords = 0;
+    _wrongWords = 0;
+    _totalKeystrokes = 0;
+    _completedWordStatuses.clear();
   }
 
   @override

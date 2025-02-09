@@ -1,4 +1,4 @@
-// lib/widgets/premium_banner.dart
+// lib/screens/settings/widgets/premium_banner.dart
 import 'package:flutter/material.dart';
 
 class PremiumBanner extends StatelessWidget {

@@ -1,4 +1,4 @@
-// lib/widgets/typing_mode_card.dart
+// lib/screens/settings/widgets/typing_mode_card.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:type_fast/providers/theme_provider.dart';

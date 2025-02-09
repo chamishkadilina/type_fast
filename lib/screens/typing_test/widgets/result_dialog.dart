@@ -1,9 +1,11 @@
+// lib/widgets/result_dialog.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:type_fast/constants/difficulty_mode.dart';
 import 'package:type_fast/model/test_result.dart';
 import 'package:type_fast/services/statistics_service.dart';
-import '../providers/typing_test_provider.dart';
-import '../providers/theme_provider.dart';
+import '../../../providers/typing_test_provider.dart';
+import '../../../providers/theme_provider.dart';
 
 class ResultDialog extends StatelessWidget {
   final int wpm;

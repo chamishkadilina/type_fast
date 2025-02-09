@@ -1,12 +1,12 @@
-// lib/widgets/more_section.dart
+// lib/screens/settings/widgets/more_section.dart
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:type_fast/services/app_rating_service.dart';
 import 'package:type_fast/services/share_service.dart';
 import 'package:type_fast/screens/improvement_tips_screen.dart';
 import 'package:type_fast/screens/privacy_policy_screen.dart';
-import 'package:type_fast/widgets/settings_section.dart';
-import 'package:type_fast/widgets/settings_tile.dart';
+import 'package:type_fast/screens/settings/widgets/settings_section.dart';
+import 'package:type_fast/screens/settings/widgets/settings_tile.dart';
 
 class MoreSection extends StatefulWidget {
   const MoreSection({super.key});

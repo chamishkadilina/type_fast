@@ -1,8 +1,9 @@
+// lib/screens/settings/widget/notification_section.dart
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:type_fast/services/notification_service.dart';
-import 'package:type_fast/widgets/settings_section.dart';
-import 'package:type_fast/widgets/settings_tile.dart';
+import 'package:type_fast/screens/settings/widgets/settings_section.dart';
+import 'package:type_fast/screens/settings/widgets/settings_tile.dart';
 
 class NotificationsSection extends StatefulWidget {
   const NotificationsSection({super.key});

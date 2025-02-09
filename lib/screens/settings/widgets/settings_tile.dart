@@ -1,4 +1,4 @@
-// lib/widgets/settings_tile.dart
+// lib/screens/settings/widgets/settings_tile.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:type_fast/providers/theme_provider.dart';
