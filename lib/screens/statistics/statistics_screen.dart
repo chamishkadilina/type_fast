@@ -92,6 +92,9 @@ class _StatisticsScreenState extends State<StatisticsScreen>
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
     final statsByMode = _getStatsByMode();
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor:
@@ -127,6 +130,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
             },
             tooltip: 'Clear All Data',
           ),
+          SizedBox(width: isLandscape ? screenWidth * 0.05 : 16),
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),

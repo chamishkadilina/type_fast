@@ -15,6 +15,9 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: themeProvider.theme.scaffoldBackgroundColor,
@@ -41,7 +44,12 @@ class SettingsScreen extends StatelessWidget {
               themeProvider.isDarkMode ? Brightness.light : Brightness.dark,
         ),
       ),
-      body: const SettingsBody(),
+      body: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: isLandscape ? screenWidth * 0.05 : 0,
+        ),
+        child: const SettingsBody(),
+      ),
     );
   }
 }
