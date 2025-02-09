@@ -96,7 +96,7 @@ class ResultDialog extends StatelessWidget {
     final subtitleColor = isDarkMode ? Colors.white70 : Colors.black54;
 
     return Container(
-      padding: EdgeInsets.all(small ? 12 : 16),
+      padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(12),

@@ -39,14 +39,22 @@ If you have questions about this privacy policy, please contact us at:
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Privacy Policy'),
         elevation: 0,
       ),
-      body: Markdown(
-        data: _privacyPolicyText,
-        padding: const EdgeInsets.all(16),
+      body: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: isLandscape ? screenWidth * 0.05 : 0,
+        ),
+        child: Markdown(
+          data: _privacyPolicyText,
+          padding: const EdgeInsets.all(16),
+        ),
       ),
     );
   }

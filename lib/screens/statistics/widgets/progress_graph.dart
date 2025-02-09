@@ -17,9 +17,12 @@ class ProgressGraph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
     if (recentTests.isEmpty) {
       return Container(
-        height: 200,
+        height: isLandscape ? 180 : 256,
         decoration: BoxDecoration(
           color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -34,13 +37,14 @@ class ProgressGraph extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.show_chart,
-                  size: 48, color: color.withValues(alpha: 0.3)),
+                  size: isLandscape ? 40 : 48,
+                  color: color.withValues(alpha: 0.3)),
               const SizedBox(height: 16),
               Text(
                 'No data available yet',
                 style: TextStyle(
                   color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                  fontSize: 16,
+                  fontSize: isLandscape ? 14 : 16,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -49,7 +53,7 @@ class ProgressGraph extends StatelessWidget {
                 'Complete some typing tests to see your progress',
                 style: TextStyle(
                   color: isDarkMode ? Colors.grey[600] : Colors.grey[400],
-                  fontSize: 14,
+                  fontSize: isLandscape ? 12 : 14,
                 ),
               ),
             ],
@@ -63,20 +67,20 @@ class ProgressGraph extends StatelessWidget {
       color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
-        padding: const EdgeInsets.all(16),
-        height: 250,
+        padding: EdgeInsets.all(isLandscape ? 12 : 16),
+        height: isLandscape ? 180 : 250,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Recent Performance',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: isLandscape ? 14 : 16,
                 fontWeight: FontWeight.w600,
                 color: color,
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: isLandscape ? 12 : 16),
             Expanded(
               child: LineChart(
                 LineChartData(
