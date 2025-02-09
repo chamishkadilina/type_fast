@@ -1,7 +1,7 @@
-// lib/widgets/about_section.dart
+// lib/screens/settings/widgets/about_section.dart
 import 'package:flutter/material.dart';
-import 'package:type_fast/widgets/settings_section.dart';
-import 'package:type_fast/widgets/typing_mode_card.dart';
+import 'package:type_fast/screens/settings/widgets/settings_section.dart';
+import 'package:type_fast/screens/settings/widgets/typing_mode_card.dart';
 
 class AboutSection extends StatelessWidget {
   const AboutSection({super.key});

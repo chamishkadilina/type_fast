@@ -1,3 +1,4 @@
+// lib/models/test_result.g.dart
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'test_result.dart';

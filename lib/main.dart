@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:type_fast/providers/theme_provider.dart';
+import 'package:type_fast/screens/typing_test/typing_test_screen.dart';
 import 'package:type_fast/services/notification_service.dart';
 import 'package:type_fast/services/statistics_service.dart';
 import 'providers/typing_test_provider.dart';
-import 'screens/typing_test_screen.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 

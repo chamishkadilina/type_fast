@@ -1,8 +1,8 @@
-// lib/widgets/word_desplay.dart
+// lib/screens/typing_test/widgets/word_display.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/typing_test_provider.dart';
-import '../providers/theme_provider.dart';
+import '../../../providers/typing_test_provider.dart';
+import '../../../providers/theme_provider.dart';
 
 class WordDisplay extends StatelessWidget {
   const WordDisplay({super.key});
