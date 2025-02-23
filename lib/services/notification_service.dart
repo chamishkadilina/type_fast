@@ -1,4 +1,3 @@
-// lib/services/notification_service.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -12,6 +11,26 @@ class NotificationService {
 
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
+
+  Future<void> _createNotificationChannel() async {
+    if (Platform.isAndroid) {
+      const AndroidNotificationChannel channel = AndroidNotificationChannel(
+        'daily_reminder', // Same as in _notificationDetails()
+        'Daily Reminders',
+        description: 'Daily practice reminder notifications',
+        importance: Importance.max,
+        enableVibration: true,
+        playSound: true,
+        showBadge: true,
+        enableLights: true,
+      );
+
+      await _notificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.createNotificationChannel(channel);
+    }
+  }
 
   Future<bool> initNotification() async {
     tz.initializeTimeZones();
@@ -30,6 +49,9 @@ class NotificationService {
       android: androidInitSettings,
       iOS: iosInitSettings,
     );
+
+    // Create notification channel before initialization
+    await _createNotificationChannel();
 
     await _notificationsPlugin.initialize(
       initSettings,
@@ -60,6 +82,7 @@ class NotificationService {
     return false;
   }
 
+  // Rest of the code remains the same...
   Future<bool> requestPermissions() async {
     if (Platform.isAndroid) {
       final androidPlugin =
@@ -145,23 +168,35 @@ class NotificationService {
     TimeOfDay time,
     List<bool> days,
   ) async {
-    await cancelAllNotifications();
+    try {
+      await cancelAllNotifications();
 
-    for (int i = 0; i < days.length; i++) {
-      if (days[i]) {
-        var scheduledDate = _nextDayOfWeek(i + 1, time);
-        await _notificationsPlugin.zonedSchedule(
-          i,
-          'Time to Practice',
-          'It\'s time for your daily practice session!',
-          tz.TZDateTime.from(scheduledDate, tz.local),
-          _notificationDetails(),
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.absoluteTime,
-          matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
-        );
+      final bool? permissionGranted = await checkPermissions();
+      debugPrint('Notification permissions granted: $permissionGranted');
+
+      for (int i = 0; i < days.length; i++) {
+        if (days[i]) {
+          var scheduledDate = _nextDayOfWeek(i + 1, time);
+          debugPrint(
+              'Scheduling notification for: ${scheduledDate.toString()}');
+
+          await _notificationsPlugin.zonedSchedule(
+            i,
+            'Time to Practice',
+            'It\'s time for your daily practice session!',
+            tz.TZDateTime.from(scheduledDate, tz.local),
+            _notificationDetails(),
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+            matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
+          );
+
+          debugPrint('Successfully scheduled notification for day $i');
+        }
       }
+    } catch (e) {
+      debugPrint('Error scheduling notifications: $e');
     }
   }
 
