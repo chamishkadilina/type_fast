@@ -1,0 +1,21 @@
+flutter_native_splash:
+  # Main configuration
+  color: "#DBEAF9"
+  image: assets/icons/splash_icon.png
+  branding: assets/icons/brand_text.png
+  branding_mode: bottom
+  branding_bottom_padding: 100
+
+  android_gravity: center
+
+  # Dark mode configuration
+  color_dark: "#121212"
+  image_dark: assets/icons/splash_icon.png
+  branding_dark: assets/icons/brand_text_dark.png
+
+  # Android 12+ configuration
+  android_12:
+    image: assets/icons/splash_icon_android12.png
+    icon_background_color: "#DBEAF9"
+    image_dark: assets/icons/splash_icon_android12.png
+    icon_background_color_dark: "#121212"

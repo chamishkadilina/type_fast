@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:type_fast/providers/theme_provider.dart';
 import 'package:type_fast/screens/typing_test/typing_test_screen.dart';
 import 'package:type_fast/services/notification_service.dart';
@@ -11,8 +12,11 @@ import 'providers/typing_test_provider.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  // Preserve the splash screen until initialization is complete
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
+  // Initialize services
   await StatisticsService().initialize();
 
   // Initialize SharedPreferences
@@ -35,6 +39,9 @@ void main() async {
       child: const TypeFastApp(),
     ),
   );
+
+  // Remove splash screen once app is initialized
+  FlutterNativeSplash.remove();
 }
 
 class TypeFastApp extends StatelessWidget {
