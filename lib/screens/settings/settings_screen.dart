@@ -7,7 +7,6 @@ import 'package:type_fast/screens/settings/widgets/about_section.dart';
 import 'package:type_fast/screens/settings/widgets/customization_section.dart';
 import 'package:type_fast/screens/settings/widgets/more_section.dart';
 import 'package:type_fast/screens/settings/widgets/notifications_section.dart';
-import 'package:type_fast/screens/settings/widgets/premium_banner.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -61,7 +60,7 @@ class SettingsBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: const [
-        PremiumBanner(),
+        // PremiumBanner(),
         CustomizationSection(),
         NotificationsSection(),
         AboutSection(),
