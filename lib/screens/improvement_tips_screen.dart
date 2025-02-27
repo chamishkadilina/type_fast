@@ -39,6 +39,23 @@ class CategoryUtils {
         return Icons.lightbulb_outline;
     }
   }
+
+  static String getImagePath(String category) {
+    switch (category.toLowerCase()) {
+      case 'speed':
+        return 'assets/images/speed.png';
+      case 'accuracy':
+        return 'assets/images/accuracy.png';
+      case 'ergonomics':
+        return 'assets/images/ergonomics.png';
+      case 'technique':
+        return 'assets/images/technique.png';
+      case 'practice':
+        return 'assets/images/practice.png';
+      default:
+        return 'assets/images/speed.png';
+    }
+  }
 }
 
 class ImprovementTipsScreen extends StatelessWidget {
@@ -82,23 +99,28 @@ class ImprovementTipsScreen extends StatelessWidget {
           SliverPadding(
             padding: EdgeInsets.symmetric(
               horizontal: isLandscape ? screenWidth * 0.05 : 16,
-              vertical: isLandscape ? 16 : 0,
+              vertical: isLandscape ? 16 : 8,
             ),
             sliver: SliverGrid(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: isLandscape ? 3 : 1,
                 mainAxisSpacing: 12,
                 crossAxisSpacing: 12,
-                childAspectRatio: 0.85,
+                // Adjust aspect ratio based on orientation
+                childAspectRatio: isLandscape ? 0.9 : 0.8,
               ),
               delegate: SliverChildBuilderDelegate(
                 (context, index) => _TipCard(
                   tip: tips[index],
                   color: CategoryUtils.getCategoryColor(tips[index].category),
+                  isLandscape: isLandscape,
                 ),
                 childCount: tips.length,
               ),
             ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(height: isLandscape ? 12 : 24),
           ),
         ],
       ),
@@ -109,10 +131,12 @@ class ImprovementTipsScreen extends StatelessWidget {
 class _TipCard extends StatelessWidget {
   final ImprovementTip tip;
   final Color color;
+  final bool isLandscape;
 
   const _TipCard({
     required this.tip,
     required this.color,
+    this.isLandscape = false,
   });
 
   @override
@@ -133,6 +157,7 @@ class _TipCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Category header
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -172,31 +197,45 @@ class _TipCard extends StatelessWidget {
               ],
             ),
           ),
+          // Content section
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  tip.title,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : const Color(0xFF2B2D42),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  tip.description,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: isDark ? Colors.white70 : Colors.grey[700],
+                    height: 1.4,
+                  ),
+                  maxLines: isLandscape ? 3 : 4,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          // Image section - Flexible height with expanded
           Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      tip.title,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : const Color(0xFF2B2D42),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      tip.description,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: isDark ? Colors.white70 : Colors.grey[700],
-                        height: 1.4,
-                      ),
-                    ),
-                  ],
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.asset(
+                  CategoryUtils.getImagePath(tip.category),
+                  width: double.infinity,
+                  // Use appropriate BoxFit to avoid distortion
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
