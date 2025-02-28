@@ -1,8 +1,8 @@
-// lib/widgets/result_dialog.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:type_fast/constants/difficulty_mode.dart';
 import 'package:type_fast/model/test_result.dart';
+import 'package:type_fast/services/share_result_service.dart';
 import 'package:type_fast/services/statistics_service.dart';
 import '../../../providers/typing_test_provider.dart';
 import '../../../providers/theme_provider.dart';
@@ -176,9 +176,39 @@ class ResultDialog extends StatelessWidget {
             ),
           ],
         ),
-        child: isLandscape
-            ? _buildLandscapeLayout(isDarkMode)
-            : _buildPortraitLayout(isDarkMode),
+        child: Stack(
+          children: [
+            isLandscape
+                ? _buildLandscapeLayout(isDarkMode)
+                : _buildPortraitLayout(isDarkMode),
+            // Close button
+            Positioned(
+              top: 12,
+              right: 12,
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Provider.of<TypingTestProvider>(context, listen: false)
+                      .restartTest();
+                },
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: (isLandscape ? Colors.white : Colors.white)
+                        .withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.close,
+                    size: 20,
+                    color: isLandscape ? Colors.grey : Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -397,7 +427,16 @@ class ResultDialog extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  ShareResultService().shareResults(
+                    context,
+                    wpm: wpm,
+                    accuracy: accuracy,
+                    correctWords: correctWords,
+                    testDurationInMinutes: testDurationInMinutes,
+                    currentMode: currentMode,
+                  );
+                },
                 icon: Icon(
                   Icons.share_rounded,
                   color: isDarkMode ? Colors.white : null,

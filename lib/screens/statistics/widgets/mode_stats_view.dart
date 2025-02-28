@@ -29,7 +29,7 @@ class ModeStatsView extends StatelessWidget {
         return SingleChildScrollView(
           padding: EdgeInsets.symmetric(
             horizontal: isLandscape ? screenWidth * 0.05 : 16,
-            vertical: 16,
+            vertical: 12,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -40,8 +40,8 @@ class ModeStatsView extends StatelessWidget {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisCount: isLandscape ? 4 : 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
                   childAspectRatio: isLandscape ? 1.5 : 1.2,
                   children: [
                     StatCard(
@@ -75,7 +75,7 @@ class ModeStatsView extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 16),
+              // SizedBox(height: 8),
               SizedBox(
                 height: isLandscape ? constraints.maxHeight * 0.90 : null,
                 child: ProgressGraph(

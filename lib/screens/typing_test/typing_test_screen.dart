@@ -18,19 +18,21 @@ class TypingTestScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: themeProvider.theme.scaffoldBackgroundColor,
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: isLandscape ? screenWidth * 0.05 : 16,
-          vertical: isLandscape ? 28 : 56,
-        ),
-        child: Column(
-          children: const [
-            AppHeader(),
-            SizedBox(height: 16),
-            WordDisplay(),
-            SizedBox(height: 16),
-            TestControls(),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: isLandscape ? screenWidth * 0.05 : 16,
+            vertical: isLandscape ? 28 : 56,
+          ),
+          child: Column(
+            children: const [
+              AppHeader(),
+              SizedBox(height: 16),
+              WordDisplay(),
+              SizedBox(height: 16),
+              TestControls(),
+            ],
+          ),
         ),
       ),
     );
