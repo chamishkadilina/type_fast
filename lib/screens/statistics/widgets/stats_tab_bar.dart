@@ -1,5 +1,7 @@
 // lib/screens/statistics/widgets/stats_tab_bar.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:type_fast/providers/theme_provider.dart';
 import 'package:type_fast/screens/statistics/statistics_screen.dart';
 
 class StatsTabBar extends StatelessWidget {
@@ -14,6 +16,7 @@ class StatsTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -67,6 +70,7 @@ class StatsTabBar extends StatelessWidget {
           }),
           indicatorColor: StatisticsColors.indicatorColor,
           indicatorWeight: 3,
+          dividerColor: themeProvider.theme.scaffoldBackgroundColor,
         ),
       ),
     );

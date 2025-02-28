@@ -23,11 +23,11 @@ class StatCard extends StatelessWidget {
         MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Card(
-      elevation: 2,
+      elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
       child: Container(
-        padding: EdgeInsets.all(isLandscape ? 12 : 16),
+        padding: EdgeInsets.all(isLandscape ? 8 : 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
@@ -41,7 +41,7 @@ class StatCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, color: color, size: isLandscape ? 24 : 28),
-            SizedBox(height: isLandscape ? 8 : 12),
+            SizedBox(height: isLandscape ? 4 : 8),
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
@@ -53,7 +53,7 @@ class StatCard extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: isLandscape ? 6 : 8),
+            SizedBox(height: isLandscape ? 4 : 8),
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(

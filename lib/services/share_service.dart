@@ -7,35 +7,32 @@ class ShareService {
   Future<void> shareApp() async {
     try {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      String appName = packageInfo.appName;
 
-      const String message = '''
-🚀 Check out TypeFast - The Ultimate Typing Practice App!
+      // Construct the download link dynamically
+      final String downloadLink = Platform.isAndroid
+          ? 'Download here: https://play.google.com/store/apps/details?id=${packageInfo.packageName}'
+          : 'Download here: https://apps.apple.com/app/id${packageInfo.packageName}';
 
-Master your typing skills with:
-• Personalized practice sessions
-• Advanced statistics
-• Multiple difficulty levels
+      // Main message (more natural & confident)
+      final String message = '''
+I'm really enjoying TypeFast! 🚀 
 
-Download now and improve your typing speed!
+Practicing with this app every day has noticeably improved my typing accuracy and speed ⌨️. 
+
+Whether you're a student, programmer, or just want to type faster, TypeFast makes it easy and fun! Works great with external keyboards too.  
+
+$downloadLink
+
+Give it a try and see the difference yourself!
 ''';
 
-      String shareText = '$message\n\n';
-
-      if (Platform.isAndroid) {
-        shareText +=
-            'https://play.google.com/store/apps/details?id=${packageInfo.packageName}';
-      } else if (Platform.isIOS) {
-        shareText += 'https://apps.apple.com/app/id${packageInfo.packageName}';
-      }
-
       await Share.share(
-        shareText,
-        subject: 'Check out $appName!',
+        message,
+        subject: 'This typing app changed my game! 💯',
       ).catchError((_) {
         // Fallback to clipboard if sharing fails
-        Clipboard.setData(ClipboardData(text: shareText));
-        throw 'Unable to share. Text copied to clipboard instead.';
+        Clipboard.setData(ClipboardData(text: message));
+        throw 'Couldn\'t share. Message copied to clipboard!';
       });
     } on PlatformException {
       rethrow;
