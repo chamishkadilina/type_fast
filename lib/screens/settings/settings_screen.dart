@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:type_fast/providers/theme_provider.dart';
-import 'package:type_fast/screens/settings/widgets/about_section.dart';
 import 'package:type_fast/screens/settings/widgets/customization_section.dart';
 import 'package:type_fast/screens/settings/widgets/more_section.dart';
 import 'package:type_fast/screens/settings/widgets/notifications_section.dart';
@@ -63,7 +62,7 @@ class SettingsBody extends StatelessWidget {
         // PremiumBanner(),
         CustomizationSection(),
         NotificationsSection(),
-        AboutSection(),
+
         MoreSection(),
       ],
     );

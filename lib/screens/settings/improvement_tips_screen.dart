@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:type_fast/model/improvement_tip.dart';
-import '../providers/theme_provider.dart';
-import '../services/improvement_tips_service.dart';
+import '../../providers/theme_provider.dart';
+import '../../services/improvement_tips_service.dart';
 
 class CategoryUtils {
   static Color getCategoryColor(String category) {

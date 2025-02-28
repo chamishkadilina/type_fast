@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:type_fast/providers/theme_provider.dart';
+import 'package:type_fast/screens/onboarding/onboarding_screen.dart';
 import 'package:type_fast/screens/typing_test/typing_test_screen.dart';
 import 'package:type_fast/services/notification_service.dart';
 import 'package:type_fast/services/statistics_service.dart';
@@ -30,13 +31,17 @@ void main() async {
     await prefs.setBool('notificationsEnabled', false);
   }
 
+  // Check if onboarding has been completed
+  final bool onboardingCompleted =
+      prefs.getBool('onboardingCompleted') ?? false;
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider(prefs)),
         ChangeNotifierProvider(create: (_) => TypingTestProvider()),
       ],
-      child: const TypeFastApp(),
+      child: TypeFastApp(onboardingCompleted: onboardingCompleted),
     ),
   );
 
@@ -45,7 +50,12 @@ void main() async {
 }
 
 class TypeFastApp extends StatelessWidget {
-  const TypeFastApp({super.key});
+  final bool onboardingCompleted;
+
+  const TypeFastApp({
+    super.key,
+    required this.onboardingCompleted,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +66,9 @@ class TypeFastApp extends StatelessWidget {
           navigatorKey: navigatorKey,
           title: 'TypeFast',
           theme: themeProvider.theme,
-          home: const TypingTestScreen(),
+          home: onboardingCompleted
+              ? const TypingTestScreen()
+              : const OnboardingScreen(),
         );
       },
     );

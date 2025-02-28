@@ -3,7 +3,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:type_fast/services/app_rating_service.dart';
 import 'package:type_fast/services/share_service.dart';
 import 'package:type_fast/services/url_launcher_service.dart';
-import 'package:type_fast/screens/improvement_tips_screen.dart';
+import 'package:type_fast/screens/settings/improvement_tips_screen.dart';
 import 'package:type_fast/screens/settings/widgets/settings_section.dart';
 import 'package:type_fast/screens/settings/widgets/settings_tile.dart';
 
